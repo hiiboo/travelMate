@@ -7,40 +7,40 @@ import { PiUserCircle } from 'react-icons/pi';
 
 function Header(): JSX.Element {
      // *** ログイン設定する時にコメントアウト解除 ***
-    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true); // ログイン設定する時にコメントアウト
+    const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+    // const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true); // ログイン設定する時にコメントアウト
     const [leftMenuOpen, setLeftMenuOpen] = useState<boolean>(false);
     const [rightMenuOpen, setRightMenuOpen] = useState<boolean>(false);
     const router = useRouter();
 
     // *** ログイン設定する時にコメントアウト解除 ***
-    // const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    // useEffect(() => {
-    //     const checkAuth = async () => {
-    //         try {
-    //             const response = await axios.get(`${apiUrl}/api/check-auth`, {
-    //                 withCredentials: true
-    //             });
-    //             console.log("Auth check response:", response.data);
-    //             if (response.data && response.data.hasOwnProperty("isLoggedIn")) {
-    //                 setIsLoggedIn(response.data.isLoggedIn);
-    //             } else {
-    //                 console.error("Unexpected API response format");
-    //             }
-    //         } catch (error) {
-    //             console.error("Auth check error", error);
-    //         }
-    //     };
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/auth/organizer/login`, {
+                    withCredentials: true
+                });
+                console.log("Auth check response:", response.data);
+                if (response.data && response.data.hasOwnProperty("isLoggedIn")) {
+                    setIsLoggedIn(response.data.isLoggedIn);
+                } else {
+                    console.error("Unexpected API response format");
+                }
+            } catch (error) {
+                console.error("Auth check error", error);
+            }
+        };
 
-    //     checkAuth();
-    // }, []);
+        checkAuth();
+    }, []);
 
     const handleLogout = () => {
         alert("開発中です");
         /*
         try {
-            await axios.post(`${apiUrl}/api/logout`, {}, {
+            await axios.post(`${apiUrl}/auth/organizer/logout`, {}, {
                 withCredentials: true
             });
             setIsLoggedIn(false);
@@ -108,7 +108,7 @@ function Header(): JSX.Element {
                         ) : (
                             <>
                                 <li onClick={() => router.push('/login')}>ログイン</li>
-                                <li onClick={() => router.push('/signup')}>新規登録</li>
+                                <li onClick={() => router.push('/register')}>新規登録</li>
                             </>
                         )}
                     </ul>

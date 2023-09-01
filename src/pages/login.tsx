@@ -17,21 +17,23 @@ function Login(): JSX.Element {
             await axios.get(`${apiUrl}/sanctum/csrf-cookie`, {
                 withCredentials: true
             });
-
+            console.log("CSRF cookie set successfully");
             // ログインリクエストを送信
-            const response = await axios.post(`${apiUrl}/api/login`, {
+            const response = await axios.post(`${apiUrl}/auth/user/login`, {
                 email,
                 password
             }, {
                 withCredentials: true
             });
-            console.log(response.data);
-
-            // ログインが成功した場合、トップページにリダイレクト
+            console.log(response.config.data);
+            console.log(response);
+            console.log(response.data.message);
             if (response.data.message === "Login successful") {
                 router.push('/');
+            } else {
+                console.error("Login failed");
+                router.push('/login');
             }
-
         } catch (error) {
             console.error("Login error", error);
         }

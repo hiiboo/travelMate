@@ -25,11 +25,8 @@ function Login(): JSX.Element {
             }, {
                 withCredentials: true
             });
-            console.log(response.config.data);
             console.log(response);
-            console.log(response.data);
-            console.log(response.data.message);
-            if (response.config.data.message === "Login successful") {
+            if (response.data.message === "Login successful") {
                 router.push('/');
             } else {
                 console.error("Login failed");

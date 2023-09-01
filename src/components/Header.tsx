@@ -19,7 +19,7 @@ function Header(): JSX.Element {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/auth/organizer/login`, {
+                const response = await axios.get(`${apiUrl}/api/check-auth`, {
                     withCredentials: true
                 });
                 console.log("Auth check response:", response.data);
@@ -36,11 +36,9 @@ function Header(): JSX.Element {
         checkAuth();
     }, []);
 
-    const handleLogout = () => {
-        alert("開発中です");
-        /*
+    const handleLogout = async () => {
         try {
-            await axios.post(`${apiUrl}/auth/organizer/logout`, {}, {
+            await axios.post(`${apiUrl}/auth/user/logout`, {}, {
                 withCredentials: true
             });
             setIsLoggedIn(false);
@@ -48,8 +46,8 @@ function Header(): JSX.Element {
         } catch (error) {
             console.error("Logout error", error);
         }
-        */
     };
+
 
     const toggleLeftMenu = () => {
         setLeftMenuOpen(prevState => !prevState);

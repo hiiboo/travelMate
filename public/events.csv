@@ -1,0 +1,6 @@
+id,title,organizer_id,location,address,place_id,description,event_image_path,start_date_time,end_date_time,status,created_at,updated_at
+1,Eaaa,1,ジーズアカデミー東京,日本、〒150-0001 東京都渋谷区神宮前６丁目３５−３ 011 JUNCTION harajuku（JUNCTION space）,ChIJgejiqZ-MGGARA86nW9tqOTU,,/image/000001.jpeg,2023/01/01 09:00,2023/01/01 18:00,公開中,2023/01/01 08:00,2023/01/01 08:00
+2,Event Title 2,1,ジーズアカデミー,日本、〒810-0041 福岡県福岡市中央区大名１丁目３−４１ プリオ大名ビル 1F,ChIJ3_spCaqRQTURxjZSe7I15dU,,/image/000002.jpeg,2023/02/01 09:00,2023/02/01 18:00,下書き,2023/02/01 08:00,"2023/02/01 08:00
+3"
+NaN,新しいイベントタイトル,1,tokyo,,/image/000001.jpeg,2023-08-31T07:17:20.831Z,2023-08-31T07:17:20.835Z,下書き,2023-08-31T07:17:20.835Z,2023-08-31T07:17:20.835Z
+NaN,新しいイベントタイトル,1,tokyo,,/image/000001.jpeg,2023-08-31T07:17:32.842Z,2023-08-31T07:17:32.842Z,下書き,2023-08-31T07:17:32.842Z,2023-08-31T07:17:32.842Z

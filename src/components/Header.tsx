@@ -19,7 +19,7 @@ function Header(): JSX.Element {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/organizer/web/check-auth`, {
+                const response = await axios.get(`${apiUrl}/organizer/check-auth`, {
                     withCredentials: true
                 });
                 console.log("Auth check response:", response.data);

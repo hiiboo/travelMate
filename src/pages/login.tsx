@@ -19,7 +19,7 @@ function Login(): JSX.Element {
             });
             console.log("CSRF cookie set successfully");
             // ログインリクエストを送信
-            const response = await axios.post(`${apiUrl}/auth/user/login`, {
+            const response = await axios.post(`${apiUrl}/auth/organizer/login`, {
                 email,
                 password
             }, {

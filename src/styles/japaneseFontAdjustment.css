@@ -1,0 +1,23 @@
+@charset "UTF-8";
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", HelveticaNeue, "游ゴシック体", YuGothic, "游ゴシック Medium", "Yu Gothic Medium", "游ゴシック", "Yu Gothic", "Sogoe UI", Verdana, "メイリオ", Meiryo, sans-serif;
+}
+
+b, strong, .bold {
+  font-family: -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", HelveticaNeue, "游ゴシック体", YuGothic, "游ゴシック", "Yu Gothic", "Sogoe UI", Verdana, "メイリオ", Meiryo, sans-serif;
+}
+
+_:lang(x)::-ms-backdrop, .selector {
+  font-family: "Segoe UI", "メイリオ", Meiryo, sans-serif;
+}
+
+@media (min-width: 1024px) {
+  body {
+    font-feature-settings: "palt" 1;
+    letter-spacing: 0.04em;
+  }
+}/*# sourceMappingURL=japaneseFontAdjustment.css.map */

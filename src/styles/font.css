@@ -1,0 +1,52 @@
+@media (min-width: 768px) {
+  body {
+    font-size: 1.125rem;
+    line-height: 2.25rem;
+  }
+  p {
+    margin-top: 2.25rem;
+    margin-bottom: 2.25rem;
+  }
+  h1 {
+    font-size: 1.625rem;
+    line-height: 1.5;
+  }
+  h2 {
+    font-size: 1.5rem;
+    line-height: 1.5;
+    margin-top: 3.125rem;
+    margin-bottom: -1.125rem;
+  }
+  h3 {
+    font-size: 1.375rem;
+    line-height: 1.5;
+    margin-top: 2.625rem;
+    margin-bottom: -1.125rem;
+  }
+}
+@media (max-width: 767px) {
+  body {
+    font-size: 1rem;
+    line-height: 1.875rem;
+  }
+  p {
+    margin-top: 1.875rem;
+    margin-bottom: 1.875rem;
+  }
+  h1 {
+    font-size: 1.375rem;
+    line-height: 1.5;
+  }
+  h2 {
+    font-size: 1.25rem;
+    line-height: 1.5;
+    margin-top: 2.25rem;
+    margin-bottom: -0.875rem;
+  }
+  h3 {
+    font-size: 1.125rem;
+    line-height: 1.5;
+    margin-top: 2rem;
+    margin-bottom: -0.875rem;
+  }
+}/*# sourceMappingURL=font.css.map */

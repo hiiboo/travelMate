@@ -13,30 +13,17 @@ function Register(): JSX.Element {
     const router = useRouter();
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-    const fetchCsrfToken = async () => {
-        try {
-            await axios.get(`${apiUrl}/sanctum/csrf-cookie`);
-        } catch (error) {
-            console.error("Error fetching CSRF token", error);
-        }
-    };
-
-
     const handleRegister = async () => {
         try {
-            // CSRFトークンを取得
-            await fetchCsrfToken();
             const response = await axios.post(`${apiUrl}/auth/user/register`, {
                 name,
                 email,
                 password,
                 password_confirmation: passwordConfirmation
-            }, {
-                withCredentials: true
             });
-            console.log(response);
+
             // 登録が成功したら、トップページにリダイレクト
-            if (response.data.message === "User registered successfully!") {
+            if (response.data.success) {
                 router.push('/');
             } else {
                 // 例えば、Laravelからのエラーメッセージを表示する

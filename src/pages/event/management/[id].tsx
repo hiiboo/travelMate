@@ -5,9 +5,11 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import Papa from 'papaparse';
 import path from 'path';
-
+import { useTranslation } from 'react-i18next';
+import '../../../langages/i18nConfig';  // i18nConfig.tsのパスを正しく指定してください。
 
 function EventManagementById() {
+    const { t } = useTranslation();  // 翻訳関数の取得
     const router = useRouter();
     const { id } = router.query;
     const [eventStatus, setEventStatus] = useState<string | null>(null);
@@ -28,103 +30,67 @@ function EventManagementById() {
 
 
     useEffect(() => {
-    // *** API設定する時にコメントアウト解除 ***
-        // ここでAPIからイベントの状態を取得する
-        // 以下は仮のコードで、実際のAPIエンドポイントや方法に合わせて変更する必要がある
-        // const fetchEventStatus = async () => {
-        //     try {
-        //         const response = await axios.get(`/api/get-event-status/${id}`);
-        //         setEventStatus(response.data.status);
-        //     } catch (error) {
-        //         console.error("Error fetching event status", error);
-        //     }
-        // };
-
-        // fetchEventStatus();
-
-    // *** API設定する時にコメントアウト ***
         const fetchEventStatus = async () => {
             try {
-                const response = await fetch('/events.csv');
-                const csvData = await response.text();
-
-                const parsedData = Papa.parse<Event>(csvData, { header: true });
-                const event = parsedData.data.find((e: Event) => e.id === id);
-
-                if (event) {
-                    setEventStatus(event.status);
-                }
+                const response = await axios.get(`/api/get-event-status/${id}`);
+                setEventStatus(response.data.status);
             } catch (error) {
                 console.error("Error fetching event status", error);
             }
         };
 
         fetchEventStatus();
+
     }, [id]);
 
-    const handleButtonAction = (buttonText: string) => {
-        switch (buttonText) {
-            case '削除':
-            // *** API設定する時にコメントアウト解除 ***
-                // このeventを削除するAPIを叩く
-                // axios.delete(`/api/delete-event/${id}`);
-                // break;
-            // *** API設定する時にコメントアウト ***
-            try {
+    const handleButtonAction = (actionKey: string) => {
+        switch (actionKey) {
+            case 'delete':
+                try {
                     axios.delete(`/api/deleteEvent?id=${id}`);
                     router.push('/event/management/');
-                    alert('記事を削除しました');
+                    alert(t('articleDeleted')); // 翻訳関数を使用
                 } catch (error) {
                     console.error("Error deleting event", error);
                 }
                 break;
-            case 'プレビュー':
+            case 'preview':
                 router.push(`/event/management/${id}/preview`);
                 break;
-            case 'タイトル':
+            case 'title':
                 router.push(`/event/management/${id}/title`);
                 break;
-            case '日時':
+            case 'dateTime':
                 router.push(`/event/management/${id}/date`);
                 break;
-            case '場所':
+            case 'location':
                 router.push(`/event/management/${id}/location`);
                 break;
-            case 'イベントの説明':
+            case 'description':
                 router.push(`/event/management/${id}/description`);
                 break;
-            case 'EventTopics':
+            case 'eventTopics':
                 router.push(`/event/management/${id}/genre`);
                 break;
             default:
-                alert('開発中です');
+                alert(t('underDevelopment')); // 翻訳関数を使用
                 break;
         }
     };
 
     const handlePublishEvent = () => {
-        if (eventStatus === '公開中' || eventStatus === '終了') {
-            // 下書きにするAPIを叩く
-            // *** API設定する時にコメントアウト解除 ***
-            // axios.patch(`/api/update-event-status/${id}`, { status: '下書き' });
-
-            // *** API設定する時にコメントアウト ***
+        if (eventStatus === 'publish' || eventStatus === 'end') {
             try {
-                axios.patch(`/api/updateEventStatus?id=${id}`, { status: '下書き' });
-                setEventStatus('下書き');
-                alert('下書きに戻しました');
+                axios.patch(`/api/update-event-status/${id}`, { status: 'draft' });
+                setEventStatus('draft');
+                alert('Updating event status.');
             } catch (error) {
                 console.error("Error updating event status", error);
             }
         } else {
-            // 公開にするAPIを叩く
-            // *** API設定する時にコメントアウト解除 ***
-            // axios.patch(`/api/update-event-status/${id}`, { status: '公開中' });
-
-            // *** API設定する時にコメントアウト ***
             try {
-                axios.patch(`/api/updateEventStatus?id=${id}`, { status: '公開中' });
-                setEventStatus('公開中');
+                axios.patch(`/api/update-event-status/${id}`, { status: 'publish' });
+                setEventStatus('publish');
                 router.push('/event/management/${id}/congratulations')
             } catch (error) {
                 console.error("Error updating event status", error);
@@ -133,13 +99,8 @@ function EventManagementById() {
     };
 
     const handleEndEvent = () => {
-        // イベントのstatusを「終了」にするAPIを叩く
-        // *** API設定する時にコメントアウト解除 ***
-        // axios.patch(`/api/update-event-status/${id}`, { status: '終了' });
-
-        // *** API設定する時にコメントアウト ***
         try {
-            axios.patch(`/api/updateEventStatus?id=${id}`, { status: '終了' });
+            axios.patch(`/api/update-event-status/${id}`, { status: 'end' });
             router.push('/event/management/');
         } catch (error) {
             console.error("Error updating event status", error);
@@ -149,28 +110,30 @@ function EventManagementById() {
     return (
         <div>
             <header className={styles.header}>
-                <h2>イベントを編集</h2>
+                <h2>{t('editEvent')}</h2>
                 <div>
-                    {/* 「削除」ボタンにonClickイベントハンドラを追加 */}
-                    <button onClick={() => handleButtonAction('削除')}>削除</button>
-                    {/* 「プレビュー」ボタンにonClickイベントハンドラを追加 */}
-                    <button onClick={() => handleButtonAction('プレビュー')}>プレビュー</button>
+                    <button onClick={() => handleButtonAction('delete')}>{t('delete')}</button>
+                    <button onClick={() => handleButtonAction('preview')}>{t('preview')}</button>
                 </div>
             </header>
             <main className={styles.main}>
-                {['サムネイル画像', 'タイトル', '主催者の追加/変更', '日時', '場所', '記事の登録', 'イベントの説明', 'その他写真の登録', 'イベント参加費', 'EventTopics', '参加人数の上限', 'ゲスト可否/人数上限', '質問機能'].map(buttonText => (
-                    <button key={buttonText} onClick={() => handleButtonAction(buttonText)}>
-                        {buttonText} <MdAddCircle />
+                {[
+                    'thumbnail', 'title', 'changeOrganizer', 'dateTime', 'location',
+                    'articleRegistration', 'eventDescription', 'otherPhotos',
+                    'participationFee', 'eventTopics', 'maxParticipants',
+                    'guestLimitation', 'questionFeature'
+                ].map(actionKey => (
+                    <button key={actionKey} onClick={() => handleButtonAction(actionKey)}>
+                        {t(actionKey)} <MdAddCircle />
                     </button>
                 ))}
             </main>
             <footer className={styles.footer}>
-                {/* ボタンのテキストと動作を現在のイベントの状態に基づいて動的に変更 */}
                 <button className='bold' onClick={handlePublishEvent}>
-                    {eventStatus === '公開中' || eventStatus === '終了' ? '下書きに戻す' : 'イベントを公開する'}
+                    {eventStatus === 'publish' || eventStatus === 'end' ? t('draft') : t('publish')}
                 </button>
-                <button className='bold' onClick={handleEndEvent}>イベントを終了にする</button>
-                <button className='bold' onClick={() => router.push('/event/management/')}>戻る（自動保存）</button>
+                <button className='bold' onClick={handleEndEvent}>{t('endEvent')}</button>
+                <button className='bold' onClick={() => router.push('/event/management/')}>{t('back')}</button>
             </footer>
         </div>
     );

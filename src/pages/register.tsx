@@ -26,7 +26,7 @@ function Register(): JSX.Element {
         try {
             // CSRFトークンを取得
             await fetchCsrfToken();
-            const response = await axios.post(`${apiUrl}/auth/user/register`, {
+            const response = await axios.post(`${apiUrl}/auth/organizer/register`, {
                 name,
                 email,
                 password,

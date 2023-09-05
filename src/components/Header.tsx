@@ -19,7 +19,7 @@ function Header(): JSX.Element {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/api/check-auth`, {
+                const response = await axios.get(`${apiUrl}/organizer/check-auth`, {
                     withCredentials: true
                 });
                 console.log("Auth check response:", response.data);
@@ -38,7 +38,7 @@ function Header(): JSX.Element {
 
     const handleLogout = async () => {
         try {
-            await axios.post(`${apiUrl}/auth/user/logout`, {}, {
+            await axios.post(`${apiUrl}/auth/organizer/logout`, {}, {
                 withCredentials: true
             });
             setIsLoggedIn(false);

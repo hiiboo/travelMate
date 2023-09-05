@@ -14,18 +14,30 @@ function EventManagementById() {
     const { id } = router.query;
     const [eventStatus, setEventStatus] = useState<string | null>(null);
 
+    type Genre = {
+        id: number;
+        name: string;
+    };
+
     type Event = {
-        id: string;
+        id: bigint;
         title: string;
-        organizer_id: string;
-        location: string;
         description: string;
-        event_image_path: string;
-        start_date_time: string;
-        end_date_time: string;
         status: string;
-        created_at: string;
-        updated_at: string;
+        event_image_path: string | null;
+        organizer_id: bigint;
+        start_date: Date;
+        end_date: Date;
+        start_time: string;
+        end_time: string;
+        name: string;
+        city: string;
+        street: string;
+        building: string;
+        zip_code: string;
+        created_at: Date | null;
+        updated_at: Date | null;
+        genres: Genre[];
     };
 
 

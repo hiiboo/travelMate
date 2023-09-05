@@ -11,7 +11,9 @@ function EventManagementThumbnail() {
     useEffect(() => {
         const fetchEventThumbnail = async () => {
             try {
-                const response = await axios.get(`/api/get-event-thumbnail-url`);
+                const response = await axios.get(`/api/get-event-thumbnail-url`, {
+                    withCredentials: true
+                });
                 setThumbnailUrl(response.data.url);
             } catch (error) {
                 console.error("Error fetching event thumbnail URL", error);
@@ -32,7 +34,9 @@ function EventManagementThumbnail() {
 
     const saveEventThumbnail = async (url: string) => {
         try {
-            await axios.patch(`/api/save-event-thumbnail-url`, { thumbnail_url: url });
+            await axios.patch(`/api/save-event-thumbnail-url`, { thumbnail_url: url }, {
+                withCredentials: true
+            });
         } catch (error) {
             console.error("Error saving event thumbnail URL", error);
         }

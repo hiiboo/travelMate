@@ -3,8 +3,6 @@ import { MdAddCircle } from 'react-icons/md';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import Papa from 'papaparse';
-import path from 'path';
 import { useTranslation } from 'react-i18next';
 import '../../../langages/i18nConfig';  // i18nConfig.tsのパスを正しく指定してください。
 
@@ -14,37 +12,12 @@ function EventManagementById() {
     const { id } = router.query;
     const [eventStatus, setEventStatus] = useState<string | null>(null);
 
-    type Genre = {
-        id: number;
-        name: string;
-    };
-
-    type Event = {
-        id: bigint;
-        title: string;
-        description: string;
-        status: string;
-        event_image_path: string | null;
-        organizer_id: bigint;
-        start_date: Date;
-        end_date: Date;
-        start_time: string;
-        end_time: string;
-        name: string;
-        city: string;
-        street: string;
-        building: string;
-        zip_code: string;
-        created_at: Date | null;
-        updated_at: Date | null;
-        genres: Genre[];
-    };
-
-
     useEffect(() => {
         const fetchEventStatus = async () => {
             try {
-                const response = await axios.get(`/api/get-event-status/${id}`);
+                const response = await axios.get(`/api/get-event-status/${id}`, {
+                    withCredentials: true
+                });
                 setEventStatus(response.data.status);
             } catch (error) {
                 console.error("Error fetching event status", error);
@@ -59,7 +32,9 @@ function EventManagementById() {
         switch (actionKey) {
             case 'delete':
                 try {
-                    axios.delete(`/api/deleteEvent?id=${id}`);
+                    axios.delete(`/api/delete-event/${id}`, {
+                        withCredentials: true
+                    });
                     router.push('/event/management/');
                     alert(t('articleDeleted')); // 翻訳関数を使用
                 } catch (error) {
@@ -93,7 +68,9 @@ function EventManagementById() {
     const handlePublishEvent = () => {
         if (eventStatus === 'publish' || eventStatus === 'end') {
             try {
-                axios.patch(`/api/update-event-status/${id}`, { status: 'draft' });
+                axios.patch(`/api/update-event-status/${id}`, { status: 'draft' }, {
+                    withCredentials: true
+                });
                 setEventStatus('draft');
                 alert('Updating event status.');
             } catch (error) {
@@ -101,7 +78,9 @@ function EventManagementById() {
             }
         } else {
             try {
-                axios.patch(`/api/update-event-status/${id}`, { status: 'publish' });
+                axios.patch(`/api/update-event-status/${id}`, { status: 'publish' }, {
+                    withCredentials: true
+                });
                 setEventStatus('publish');
                 router.push('/event/management/${id}/congratulations')
             } catch (error) {
@@ -112,7 +91,9 @@ function EventManagementById() {
 
     const handleEndEvent = () => {
         try {
-            axios.patch(`/api/update-event-status/${id}`, { status: 'end' });
+            axios.patch(`/api/update-event-status/${id}`, { status: 'end' }, {
+                withCredentials: true
+            });
             router.push('/event/management/');
         } catch (error) {
             console.error("Error updating event status", error);

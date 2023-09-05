@@ -13,9 +13,11 @@ function EventManagementDateTime() {
     useEffect(() => {
         const fetchEventDates = async () => {
             try {
-                const response = await axios.get(`/api/get-event-dates/${id}`);
-                setStartDate(response.data.start_date_time);
-                setEndDate(response.data.end_date_time);
+                const response = await axios.get(`/api/get-event-dates/${id}`, {
+                    withCredentials: true
+                });
+                setStartDate(response.data.start_date);
+                setEndDate(response.data.end_date);
             } catch (error) {
                 console.error("Error fetching event dates", error);
             }
@@ -26,7 +28,9 @@ function EventManagementDateTime() {
 
     const saveDates = async () => {
         try {
-            await axios.patch(`/api/update-event-dates/${id}`, { start_date_time: startDate, end_date_time: endDate });
+            await axios.patch(`/api/update-event-dates/${id}`, { start_date: startDate, end_date: endDate }, {
+                withCredentials: true
+            });
         } catch (error) {
             console.error("Error updating event dates", error);
         }

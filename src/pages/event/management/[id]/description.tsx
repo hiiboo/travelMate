@@ -12,7 +12,9 @@ function EventManagementDescription() {
     useEffect(() => {
         const fetchEventDescription = async () => {
             try {
-                const response = await axios.get(`/api/get-event-description/${id}`);
+                const response = await axios.get(`/api/get-event-description/${id}`, {
+                    withCredentials: true
+                });
                 setEventDescription(response.data.description);
             } catch (error) {
                 console.error("Error fetching event description", error);
@@ -24,7 +26,9 @@ function EventManagementDescription() {
 
     const saveDescription = async () => {
         try {
-            await axios.patch(`/api/update-event-description/${id}`, { description: eventDescription });
+            await axios.patch(`/api/update-event-description/${id}`, { description: eventDescription }, {
+                withCredentials: true
+            });
         } catch (error) {
             console.error("Error updating event description", error);
         }

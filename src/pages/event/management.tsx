@@ -21,13 +21,8 @@ function EventManagement(): JSX.Element {
         organizer_id: bigint;
         start_date: Date;
         end_date: Date;
-        // start_time: string;
-        // end_time: string;
-        // name: string;
-        city: string;
-        // street: string;
-        // building: string;
-        // zip_code: string;
+        name: string;
+        address: string;
         created_at: Date | null;
         // updated_at: Date | null;
         genres: Genre[];
@@ -124,7 +119,7 @@ function EventManagement(): JSX.Element {
                                     </ul>
                                 </div>
                                 <h2>{event.title}</h2>
-                                <p className={styles.location}><MdOutlineLocationOn />{event.city}</p>
+                                <p className={styles.location}><MdOutlineLocationOn />{event.name}{event.address}</p>
                                 <p className={styles.date}>
                                     <MdOutlineDateRange />
                                     {formatDateToCustom(event.start_date.toISOString())} -

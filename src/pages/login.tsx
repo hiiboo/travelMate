@@ -26,10 +26,14 @@ function Login(): JSX.Element {
                 withCredentials: true
             });
             console.log(response);
-            if (response.data.message === "Login successful") {
+            if (response.status === 200 && response.data.message === "Login successful") {
+                // ログイン成功
                 router.push('/');
+                alert('Login successful');
             } else {
-                console.error("Login failed");
+                // ログイン失敗
+                alert('Login failed');
+                console.error("Login failed", response.data.message);
                 router.push('/login');
             }
         } catch (error) {

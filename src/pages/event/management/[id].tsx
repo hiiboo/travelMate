@@ -44,6 +44,9 @@ function EventManagementById() {
             case 'preview':
                 router.push(`/event/management/${id}/preview`);
                 break;
+            case 'thumbnail':
+                router.push(`/event/management/${id}/thumbnail`);
+                break;
             case 'title':
                 router.push(`/event/management/${id}/title`);
                 break;
@@ -53,7 +56,7 @@ function EventManagementById() {
             case 'location':
                 router.push(`/event/management/${id}/location`);
                 break;
-            case 'description':
+            case 'eventDescription':
                 router.push(`/event/management/${id}/description`);
                 break;
             case 'eventTopics':

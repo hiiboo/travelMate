@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import styles from '../../../../styles/eventManagementById.module.scss';
 import { MdArrowBack } from 'react-icons/md';
 import { uploadImage } from '../../../../utils/uploadImage';  // あなたのUploadImage.tsxのパスを適切に設定してください
@@ -7,6 +8,7 @@ import { uploadImage } from '../../../../utils/uploadImage';  // あなたのUpl
 function EventManagementThumbnail() {
     const [ThumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const fetchEventThumbnail = async () => {
@@ -57,13 +59,16 @@ function EventManagementThumbnail() {
     return (
         <div>
             <header className={styles.header}>
-                <MdArrowBack />
+                <MdArrowBack onClick={() => router.push('/event/management/${id}/')} />
                 <h2>イベントの画像</h2>
             </header>
             <main className={styles.main}>
                 <img src={ThumbnailUrl || '/path-to-default-thumbnail.jpg'} alt="Event Thumbnail" />
                 <input type="file" onChange={onThumbnailChange} />
             </main>
+            <footer className={styles.footer}>
+                <button className='bold' onClick={() => router.push('/event/management/${id}/')}>戻る（自動保存）</button>
+            </footer>
         </div>
     );
 }

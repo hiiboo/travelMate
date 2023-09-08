@@ -5,6 +5,7 @@ import axios from 'axios';
 import Link from 'next/link';
 import styles from '../../styles/eventManagement.module.scss';
 import { MdOutlineDateRange, MdOutlineLocationOn, MdAddCircleOutline } from 'react-icons/md';
+import { formatDateToCustom } from '../../utils/formatDateToCustom';
 
 function EventManagement(): JSX.Element {
     type Genre = {
@@ -33,18 +34,6 @@ function EventManagement(): JSX.Element {
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
-
-// TODO：utilに設定する
-    function formatDateToCustom(dateString: string): string {
-        const date = new Date(dateString);
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0');
-        const day = date.getDate().toString().padStart(2, '0');
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-
-        return `${year}/${month}/${day} ${hours}:${minutes}`;
-    }
 
     useEffect(() => {
 
@@ -101,7 +90,7 @@ function EventManagement(): JSX.Element {
         <div>
             <ul>
                 <li className={styles.listItem} onClick={handleCreateNewEvent}>
-                    <h2 className={styles.eventCreate}><MdAddCircleOutline />記事を新規作成する</h2>
+                    <h2 className={styles.eventCreate}><MdAddCircleOutline />イベントを新規作成する</h2>
                 </li>
                 {events.map(event => (
                     <Link href={`management/${event.id}`}>

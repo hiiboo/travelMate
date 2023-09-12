@@ -4,18 +4,28 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import '../../../langages/i18nConfig';  // i18nConfig.tsのパスを正しく指定してください。
+import i18n from '../../../langages/i18nConfig'; // i18nConfig.tsのパスを正しく指定してください。
+
+const ACTION_KEYS = [
+    'thumbnail', 'title', 'changeOrganizer', 'dateTime', 'location',
+    'articleRegistration', 'eventDescription', 'otherPhotos',
+    'participationFee', 'eventTopics', 'maxParticipants',
+    'guestLimitation', 'questionFeature'
+];
 
 function EventManagementById() {
     const { t } = useTranslation();  // 翻訳関数の取得
     const router = useRouter();
     const { id } = router.query;
     const [eventStatus, setEventStatus] = useState<string | null>(null);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    const [language, setLanguage] = useState<string>('ja');
+
 
     useEffect(() => {
         const fetchEventStatus = async () => {
             try {
-                const response = await axios.get(`/api/get-event-status/${id}`, {
+                const response = await axios.get(`${apiUrl}/api/event-status/${id}`, {
                     withCredentials: true
                 });
                 setEventStatus(response.data.status);
@@ -26,13 +36,27 @@ function EventManagementById() {
 
         fetchEventStatus();
 
+        const fetchLanguageSetting = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/api/language-setting`, {
+                    withCredentials: true
+                });
+                setLanguage(response.data.language);
+                i18n.changeLanguage(response.data.language);
+            } catch (error) {
+                console.error("Error fetching language setting", error);
+            }
+        };
+
+        fetchLanguageSetting();
+
     }, [id]);
 
-    const handleButtonAction = (actionKey: string) => {
+    const handleHeaderAction = async (actionKey: string) => {
         switch (actionKey) {
             case 'delete':
                 try {
-                    axios.delete(`/api/delete-event/${id}`, {
+                    await axios.delete(`${apiUrl}/api/events/${id}`, {
                         withCredentials: true
                     });
                     router.push('/event/management/');
@@ -44,6 +68,14 @@ function EventManagementById() {
             case 'preview':
                 router.push(`/event/management/${id}/preview`);
                 break;
+            default:
+                alert(t('underDevelopment'));
+                break;
+        }
+    };
+
+    const handleMainAction = (actionKey: string) => {
+        switch (actionKey) {
             case 'thumbnail':
                 router.push(`/event/management/${id}/thumbnail`);
                 break;
@@ -63,15 +95,25 @@ function EventManagementById() {
                 router.push(`/event/management/${id}/genre`);
                 break;
             default:
-                alert(t('underDevelopment')); // 翻訳関数を使用
+                alert(t('underDevelopment'));
+                break;
+        }
+    };
+    const handleFooterAction = (actionKey: string) => {
+        switch (actionKey) {
+            case 'back':
+                router.push('/event/management/');
+                break;
+            default:
+                alert(t('underDevelopment'));
                 break;
         }
     };
 
-    const handlePublishEvent = () => {
+    const handlePublishEvent = async () => {
         if (eventStatus === 'publish' || eventStatus === 'end') {
             try {
-                axios.patch(`/api/update-event-status/${id}`, { status: 'draft' }, {
+                await axios.patch(`${apiUrl}/api/events/${id}`, { status: 'draft' }, {
                     withCredentials: true
                 });
                 setEventStatus('draft');
@@ -81,20 +123,20 @@ function EventManagementById() {
             }
         } else {
             try {
-                axios.patch(`/api/update-event-status/${id}`, { status: 'publish' }, {
+                await axios.patch(`${apiUrl}/api/events/${id}`, { status: 'publish' }, {
                     withCredentials: true
                 });
                 setEventStatus('publish');
-                router.push('/event/management/${id}/congratulations')
+                router.push(`/event/management/${id}/congratulations`)
             } catch (error) {
                 console.error("Error updating event status", error);
             }
         }
     };
 
-    const handleEndEvent = () => {
+    const handleEndEvent = async () => {
         try {
-            axios.patch(`/api/update-event-status/${id}`, { status: 'end' }, {
+            await axios.patch(`${apiUrl}/api/events/${id}`, { status: 'end' }, {
                 withCredentials: true
             });
             router.push('/event/management/');
@@ -108,28 +150,23 @@ function EventManagementById() {
             <header className={styles.header}>
                 <h2>{t('editEvent')}</h2>
                 <div>
-                    <button onClick={() => handleButtonAction('delete')}>{t('delete')}</button>
-                    <button onClick={() => handleButtonAction('preview')}>{t('preview')}</button>
+                    <button onClick={() => handleHeaderAction('delete')}>{t('delete')}</button>
+                    <button onClick={() => handleHeaderAction('preview')}>{t('preview')}</button>
                 </div>
             </header>
             <main className={styles.main}>
-                {[
-                    'thumbnail', 'title', 'changeOrganizer', 'dateTime', 'location',
-                    'articleRegistration', 'eventDescription', 'otherPhotos',
-                    'participationFee', 'eventTopics', 'maxParticipants',
-                    'guestLimitation', 'questionFeature'
-                ].map(actionKey => (
-                    <button key={actionKey} onClick={() => handleButtonAction(actionKey)}>
+                {ACTION_KEYS.map(actionKey => (
+                    <button key={actionKey} onClick={() => handleMainAction(actionKey)}>
                         {t(actionKey)} <MdAddCircle />
                     </button>
                 ))}
             </main>
             <footer className={styles.footer}>
                 <button className='bold' onClick={handlePublishEvent}>
-                    {eventStatus === 'publish' || eventStatus === 'end' ? t('draft') : t('publish')}
+                    {eventStatus === 'publish' || eventStatus === 'end' ? t('returnDraft') : t('publish')}
                 </button>
                 <button className='bold' onClick={handleEndEvent}>{t('endEvent')}</button>
-                <button className='bold' onClick={() => router.push('/event/management/')}>{t('back')}</button>
+                <button className='bold' onClick={() => handleFooterAction('back')}>{t('back')}</button>
             </footer>
         </div>
     );

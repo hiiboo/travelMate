@@ -6,6 +6,8 @@ import Link from 'next/link';
 import styles from '../../styles/eventManagement.module.scss';
 import { MdOutlineDateRange, MdOutlineLocationOn, MdAddCircleOutline } from 'react-icons/md';
 import { formatDateToCustom } from '../../utils/formatDateToCustom';
+import { useTranslation } from 'react-i18next';
+import i18n from '../../langages/i18nConfig';
 
 function EventManagement(): JSX.Element {
     type Genre = {
@@ -31,19 +33,36 @@ function EventManagement(): JSX.Element {
 
     const [events, setEvents] = useState<Event[]>([]);
     const [loading, setLoading] = useState(true);
+    const { t } = useTranslation();  // <-- 追加
 
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const router = useRouter();
+
+    const createSecuredAxiosInstance = () => axios.create({
+        baseURL: process.env.NEXT_PUBLIC_API_URL,
+        withCredentials: true,
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('organizer_token')}`
+        }
+    });
+
 
     useEffect(() => {
 
         const fetchEvents = async () => {
             try {
-// TODO：backendの設定が必要
-                const response = await axios.get(`${apiUrl}/api/events-for-logged-in-user`, {
-                    withCredentials: true
-                });
-                setEvents(response.data);
+                const securedAxios = createSecuredAxiosInstance();
+                const response = await securedAxios.get('/api/my-events');
+                console.log('API Response:', response.data);
+
+                const formattedEvents = response.data.data.map((event: any) => ({
+                    ...event,
+                    start_date: new Date(event.start_date),
+                    end_date: new Date(event.end_date),
+                }));
+
+                setEvents(formattedEvents);
+
             } catch (error) {
                 console.error("Error fetching events", error);
             } finally {
@@ -51,19 +70,30 @@ function EventManagement(): JSX.Element {
             }
         };
 
+        const fetchLanguageSetting = async () => {
+            try {
+                const securedAxios = createSecuredAxiosInstance();
+                const response = await securedAxios.get('/api/language-setting');
+                i18n.changeLanguage(response.data.language);
+            } catch (error) {
+                console.error("Error fetching language setting", error);
+            }
+        };
+
         fetchEvents();
+        fetchLanguageSetting();
+
     }, []);
 
     const handleCreateNewEvent = async () => {
         try {
-            const response = await axios.post(`${apiUrl}/api/create-event`, {
+            const securedAxios = createSecuredAxiosInstance();
+            const response = await securedAxios.post('/api/create-event', {
                 // 必要に応じて、ここに新しいイベントに関するデータを渡す
-            }, {
-                withCredentials: true
             });
 
             if (response.status === 200) {
-                router.push(`/management/${response.data.id}`); // 作成されたイベントのIDにリダイレクト
+                router.push(`/management/${response.data.id}`);
             }
         } catch (error) {
             console.error("Error creating new event", error);
@@ -73,13 +103,14 @@ function EventManagement(): JSX.Element {
     if (loading) {
         return <div>Loading...</div>;
     }
+
     function getStatusClass(status: string): string {
         switch (status) {
-            case '公開中':
+            case 'published':
                 return 'published';
-            case '下書き':
+            case 'draft':
                 return 'draft';
-            case '終了':
+            case 'ended':
                 return 'ended';
             default:
                 return '';
@@ -90,7 +121,7 @@ function EventManagement(): JSX.Element {
         <div>
             <ul>
                 <li className={styles.listItem} onClick={handleCreateNewEvent}>
-                    <h2 className={styles.eventCreate}><MdAddCircleOutline />イベントを新規作成する</h2>
+                    <h2 className={styles.eventCreate}><MdAddCircleOutline />{t('createNewEvent')}</h2>
                 </li>
                 {events.map(event => (
                     <Link href={`management/${event.id}`}>
@@ -99,7 +130,7 @@ function EventManagement(): JSX.Element {
                             <div className={styles.eventDetails}>
                                 <div className={styles.eventDetailsHeader}>
                                     <div className={`${styles.status} ${styles[getStatusClass(event.status)]}`}>
-                                        <p>{event.status}</p>
+                                        <p>{t(event.status)}</p>
                                     </div>
                                     <ul className={styles.genres}>
                                         {event.genres.map(genre => (
@@ -121,7 +152,6 @@ function EventManagement(): JSX.Element {
             </ul>
         </div>
     );
-
 }
 
 export default EventManagement;

@@ -28,6 +28,7 @@ function Login(): JSX.Element {
             console.log(response);
             if (response.status === 200 && response.data.message === "Login successful") {
                 // ログイン成功
+                localStorage.setItem('organizer_token', response.data.token);  // この行を追加
                 router.push('/');
                 alert('Login successful');
             } else {

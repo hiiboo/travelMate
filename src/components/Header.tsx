@@ -15,27 +15,35 @@ function Header(): JSX.Element {
 
     useEffect(() => {
         const checkAuth = async () => {
-            try {
-                const response = await axios.get(`${apiUrl}/organizer/check-auth`, {
-                    withCredentials: true
-                });
-                console.log("Auth check response:", response.data);
-                if (response.data && response.data.hasOwnProperty("isLoggedIn")) {
-                    setIsLoggedIn(response.data.isLoggedIn);
-                    console.log("Logged in", response);
-                } else {
-                    console.error("Unexpected API response format");
+            // localStorageからトークンを取得
+            const storedToken = localStorage.getItem('organizer_token');
+            // トークンが存在すればログイン中とみなす
+            if (storedToken) {
+                try {
+                    const response = await axios.get(`${apiUrl}/organizer/check-auth`, {
+                        withCredentials: true
+                    });
+                    console.log("Auth check response:", response.data);
+                    if (response.data && response.data.hasOwnProperty("isLoggedIn")) {
+                        setIsLoggedIn(response.data.isLoggedIn);
+                        console.log("Logged in", response);
+                    } else {
+                        console.error("Unexpected API response format");
+                    }
+                } catch (error) {
+                    if (axios.isAxiosError(error) && error.response && error.response.status === 401) {
+                        // 401 Unauthorized（未認証）なので、ユーザーがログアウトしていると解釈
+                        setIsLoggedIn(false);
+                        console.log("Logged out", error);
+                    } else {
+                        // 401以外のエラーは予期しないエラーとして取り扱う
+                        console.error("Auth check error", error);
+                    }
+                    return;
                 }
-            } catch (error) {
-                if (axios.isAxiosError(error) && error.response && error.response.status === 401) {
-                    // 401 Unauthorized（未認証）なので、ユーザーがログアウトしていると解釈
-                    setIsLoggedIn(false);
-                    console.log("Logged out", error);
-                } else {
-                    // 401以外のエラーは予期しないエラーとして取り扱う
-                    console.error("Auth check error", error);
-                }
-                return;
+            } else {
+                // トークンが存在しない場合はログアウトしているとみなす
+                setIsLoggedIn(false);
             }
         };
         // ページ読み込み時に認証確認
@@ -59,14 +67,15 @@ function Header(): JSX.Element {
                 withCredentials: true
             });
             if (response.status === 200 && response.data.message === "Logout successful") {
-                // ログイン成功
+                // ログアウト成功
+                localStorage.removeItem('organizer_token'); // トークンをlocalStorageから削除
                 setIsLoggedIn(false);
                 router.push('/'); // ログアウト後、トップページにリダイレクト
                 closeAllMenus(); // メニューを閉じる
                 alert('Logout successful');
                 console.log("Logout successful", response);
             } else {
-                // ログイン失敗
+                // ログアウト失敗
                 alert('Logout failed');
                 console.error("Logout failed", response);
             }

@@ -11,6 +11,7 @@ function EventManagementLocation() {
     const { id } = router.query;
     const [location, setLocation] = useState<string>('');
     const [address, setAddress] = useState<string>('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const mapRef = useRef(null);
     const [map, setMap] = useState<any>(null);
@@ -19,7 +20,7 @@ function EventManagementLocation() {
     useEffect(() => {
         const fetchEventLocation = async () => {
             try {
-                const response = await axios.get(`/api/get-event-location/${id}`, {
+                const response = await axios.get(`${apiUrl}/api/get-event-location/${id}`, {
                     withCredentials: true
                 });
                 if (response.data) {
@@ -56,7 +57,7 @@ function EventManagementLocation() {
 
     const searchLocation = async (query: string) => {
         try {
-            const response = await axios.post(`/api/search-location`, { query }, {
+            const response = await axios.post(`${apiUrl}/api/google-maps/search-location`, { query }, {
                 withCredentials: true
             });
             if (response.data) {
@@ -87,7 +88,7 @@ function EventManagementLocation() {
 
     const saveLocation = async (place: { name: string, formatted_address: string }) => {
         try {
-            await axios.patch(`/api/update-event-location/${id}`, {
+            await axios.patch(`${apiUrl}/api/update-event-location/${id}`, {
                 location: place.name,
                 address: place.formatted_address
             }, {
@@ -101,7 +102,7 @@ function EventManagementLocation() {
     return (
         <div>
             <header className={styles.header}>
-                <MdArrowBack onClick={() => router.push('/event/management/${id}/')} />
+                <MdArrowBack onClick={() => router.push(`/event/management/${id}/`)} />
                 <h2>イベントの場所</h2>
             </header>
             <main className={styles.main}>
@@ -124,7 +125,7 @@ function EventManagementLocation() {
                 <div ref={mapRef} style={{ width: '100%', height: '400px' }}></div>
             </main>
             <footer className={styles.footer}>
-                <button className='bold' onClick={() => router.push('/event/management/${id}/')}>戻る（自動保存）</button>
+                <button className='bold' onClick={() => router.push(`/event/management/${id}/`)}>戻る（自動保存）</button>
             </footer>
         </div>
     );

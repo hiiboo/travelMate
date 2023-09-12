@@ -9,11 +9,13 @@ function EventManagementThumbnail() {
     const [ThumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
     const [file, setFile] = useState<File | null>(null);
     const router = useRouter();
+    const { id } = router.query;
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
         const fetchEventThumbnail = async () => {
             try {
-                const response = await axios.get(`/api/get-event-thumbnail-url`, {
+                const response = await axios.get(`${apiUrl}/api/event-image-path/${id}`, {
                     withCredentials: true
                 });
                 setThumbnailUrl(response.data.url);
@@ -36,7 +38,7 @@ function EventManagementThumbnail() {
 
     const saveEventThumbnail = async (url: string) => {
         try {
-            await axios.patch(`/api/save-event-thumbnail-url`, { thumbnail_url: url }, {
+            await axios.patch(`${apiUrl}/api/event-image-path/${id}`, { thumbnail_url: url }, {
                 withCredentials: true
             });
         } catch (error) {
@@ -59,7 +61,7 @@ function EventManagementThumbnail() {
     return (
         <div>
             <header className={styles.header}>
-                <MdArrowBack onClick={() => router.push('/event/management/${id}/')} />
+                <MdArrowBack onClick={() => router.push(`/event/management/${id}/`)} />
                 <h2>イベントの画像</h2>
             </header>
             <main className={styles.main}>
@@ -67,7 +69,7 @@ function EventManagementThumbnail() {
                 <input type="file" onChange={onThumbnailChange} />
             </main>
             <footer className={styles.footer}>
-                <button className='bold' onClick={() => router.push('/event/management/${id}/')}>戻る（自動保存）</button>
+                <button className='bold' onClick={() => router.push(`/event/management/${id}/`)}>戻る（自動保存）</button>
             </footer>
         </div>
     );

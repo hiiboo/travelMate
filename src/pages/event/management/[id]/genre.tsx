@@ -10,11 +10,12 @@ function EventManagementGenre() {
     const [eventGenre, setEventGenre] = useState<string>('');
     const [genres, setGenres] = useState<{ genre_id: number, name: string }[]>([]);
     const [selectedGenres, setSelectedGenres] = useState<number[]>([]);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
         const fetchGenres = async () => {
             try {
-                const response = await axios.get('/api/get-genres', {
+                const response = await axios.get('${apiUrl}/api/genres', {
                     withCredentials: true
                 });
                 setGenres(response.data);
@@ -25,7 +26,7 @@ function EventManagementGenre() {
 
         const fetchEventGenres = async () => {
             try {
-                const response = await axios.get(`/api/get-event-genres/${id}`, {
+                const response = await axios.get(`${apiUrl}/api/event/${id}/genres`, {
                     withCredentials: true
                 });
                 setSelectedGenres(response.data.map((g: { genre_id: number }) => g.genre_id));
@@ -40,7 +41,7 @@ function EventManagementGenre() {
 
     const saveGenre = async () => {
         try {
-            await axios.patch(`/api/update-event-genre/${id}`, { genre: eventGenre }, {
+            await axios.patch(`${apiUrl}/api/event/${id}/genres`, { genre: eventGenre }, {
                 withCredentials: true
             });
         } catch (error) {
@@ -58,7 +59,7 @@ function EventManagementGenre() {
         setSelectedGenres(updatedSelection);
 
         try {
-            await axios.post(`/api/update-event-genres/${id}`, { genres: updatedSelection }, {
+            await axios.post(`${apiUrl}/api/event/${id}/genres`, { genres: updatedSelection }, {
                 withCredentials: true
             });
         } catch (error) {
@@ -69,7 +70,7 @@ function EventManagementGenre() {
     return (
         <div>
             <header className={styles.header}>
-                <MdArrowBack onClick={() => router.push('/event/management/${id}/')} />
+                <MdArrowBack onClick={() => router.push(`/event/management/${id}/`)} />
                 <h2>EventTopics</h2>
             </header>
             <main className={styles.main}>
@@ -87,7 +88,7 @@ function EventManagementGenre() {
                 </div>
             </main>
             <footer className={styles.footer}>
-                <button className='bold' onClick={() => router.push('/event/management/${id}/')}>戻る（自動保存）</button>
+                <button className='bold' onClick={() => router.push(`/event/management/${id}/`)}>戻る（自動保存）</button>
             </footer>
         </div>
     );

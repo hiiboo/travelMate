@@ -9,11 +9,14 @@ function EventManagementTitle() {
     const router = useRouter();
     const { id } = router.query;
     const [eventTitle, setEventTitle] = useState<string>('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
         const fetchEventTitle = async () => {
+            if (!id) return;  // 追加: id が存在しない場合はリクエストをスキップ
+
             try {
-                const response = await axios.get(`/api/get-event-title/${id}`, {
+                const response = await axios.get(`${apiUrl}/api/event-title/${id}`, {
                     withCredentials: true
                 });
                 setEventTitle(response.data.title);
@@ -21,12 +24,14 @@ function EventManagementTitle() {
                 console.error("Error fetching event title", error);
             }
         };
+
         fetchEventTitle();
     }, [id]);
 
+
     const saveTitle = async () => {
         try {
-            await axios.patch(`/api/update-event-title/${id}`, { title: eventTitle }, {
+            await axios.patch(`${apiUrl}/api/event-title/${id}`, { title: eventTitle }, {
                 withCredentials: true
             });
         } catch (error) {
@@ -37,7 +42,7 @@ function EventManagementTitle() {
     return (
         <div>
             <header className={styles.header}>
-                <MdArrowBack onClick={() => router.push('/event/management/${id}/')} />
+                <MdArrowBack onClick={() => router.push(`/event/management/${id}/`)} />
                 <h2>タイトル</h2>
             </header>
             <main className={styles.main}>
@@ -53,7 +58,7 @@ function EventManagementTitle() {
                 </div>
             </main>
             <footer className={styles.footer}>
-                <button className='bold' onClick={() => router.push('/event/management/${id}/')}>戻る（自動保存）</button>
+                <button className='bold' onClick={() => router.push(`/event/management/${id}/`)}>戻る（自動保存）</button>
             </footer>
         </div>
     );

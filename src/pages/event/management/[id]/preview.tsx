@@ -4,136 +4,61 @@ import styles from '../../../../styles/eventContents.module.scss';
 import axios from 'axios';
 import { MdArrowBack, MdOutlineInsertComment, MdOutlineDateRange, MdOutlineLocationOn } from 'react-icons/md';
 import { formatDateToCustom } from '../../../../utils/formatDateToCustom';
+import { useTranslation } from 'react-i18next';  // 追加
+import i18n from '../../../../langages/i18nConfig';  // 追加
 
 function EventManagementPreview() {
+    const { t } = useTranslation();  // 追加: 翻訳関数の取得
     const router = useRouter();
     const { id } = router.query;
     const [eventData, setEventData] = useState<any>(null);
     const [embedMapUrl, setEmbedMapUrl] = useState<string | null>(null);
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;  // APIのURL
+    const [language, setLanguage] = useState<string>('ja');  // 追加: 言語の状態
+
 
     useEffect(() => {
-    // *** API設定する時にコメントアウト解除 ***
-        // const fetchEventData = async () => {
-        //     try {
-        //         const response = await axios.get(`/api/get-event/${id}`);
-        //         setEventData(response.data);
-        //     } catch (error) {
-        //         console.error("Error fetching event data", error);
-        //     }
-        // };
-
-        // fetchEventData();
-
-    // *** API設定する時にコメントアウト ***
-         // 仮のデータ
-        type EventData = {
-            [key: string]: {
-                id: number;
-                title: string;
-                organizer_id: number;
-                location: string;
-                address: string;
-                place_id: string;
-                description: string;
-                event_image_path: string;
-                start_date_time: string;
-                end_date_time: string;
-                status: string;
-                created_at: string;
-                updated_at: string;
-            }
-        }
-        const mockData: EventData = {
-            "1": {
-                id: 1,
-                title: "特別展「和食 ～日本の自然、人々の知恵～」",
-                organizer_id: 1,
-                location: "ジーズアカデミー東京",
-                address: "日本、〒150-0001 東京都渋谷区神宮前６丁目３５−３ 011 JUNCTION harajuku（JUNCTION space）",
-                place_id: "ChIJgejiqZ-MGGARA86nW9tqOTU",
-                description: "そこも多年とにかくこのお話し順とともにのの以上から与えたで。とうとう事実が学習社はかつてその反抗ですなけれまでへ云っといるですには融通ならんましたて、まだにも向っでうありん。会をなるありものははなはだ将来をやはりだただ。正しく嘉納さんの講演自分ずいぶん運動を安んずるます学校ある後れどっちか料理でについておろかでしょでないずて、こういう今日も私か順序人格に考えから、嘉納さんののが言葉のその他へ無論ご相違と決するながらあなた国を不招待にしように同時にお推察がありたでて、とうとうあたかも焦燥を釣らですば行くなら事にするたん。けれどもそうしてお背後の立っのはしばらく容易ときめないて、その数がもいるますてって権力にありて行くですです。こんな時兄弟のうちその自分はあなた上がしなかと嘉納さんを云っあった、霧のほかたという小講演んべきませから、文字のところに人で事実までのやり方が始め利くてならけれども、全くの昔のするてこの時をよく聞いんんときですのんて、古いたうてこれからご考なっなものありなけれです。",
-                event_image_path: "/image/000003.jpg",
-                start_date_time: "2023-09-06T08:30:00Z",
-                end_date_time: "2023-09-06T18:30:00Z",
-                status: "publish",
-                created_at: "2023/01/01 08:00",
-                updated_at: "2023/01/01 08:00"
+        const fetchEventData = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/api/events/${id}`);
+                setEventData(response.data);
+            } catch (error) {
+                console.error("Error fetching event data", error);
             }
         };
-        if (id) {
-            const eventIdString = String(id);
-            if (mockData.hasOwnProperty(eventIdString)) {
-                setEventData(mockData[eventIdString]);
+
+        fetchEventData();
+
+        const fetchLanguageSetting = async () => {
+            try {
+                const response = await axios.get(`${apiUrl}/api/language-setting`, {
+                    withCredentials: true
+                });
+                setLanguage(response.data.language);
+                i18n.changeLanguage(response.data.language);  // 言語の切り替え
+            } catch (error) {
+                console.error("Error fetching language setting", error);
             }
-        }
+        };
+
+        fetchLanguageSetting();  // 言語設定の取得
+
     }, [id]);
 
     const [otherEvents, setOtherEvents] = useState<any[]>([]);
 
     useEffect(() => {
-    // *** API設定する時にコメントアウト解除 ***
-        // const fetchOtherEvents = async () => {
-        //     try {
-        //         const response = await axios.get('/api/get-public-events');
-        //         setOtherEvents(response.data);
-        //     } catch (error) {
-        //         console.error("Error fetching other events", error);
-        //     }
-        // };
+        const fetchOtherEvents = async () => {
+            try {
+                const response = await axios.get('/api/get-public-events');
+                setOtherEvents(response.data);
+            } catch (error) {
+                console.error("Error fetching other events", error);
+            }
+        };
 
-        // fetchOtherEvents();
-
-    // *** API設定する時にコメントアウト ***
-        // 仮のデータを使用
-        const mockOtherEvents = [
-            {
-                id: 2,
-                title: "Event Title 2",
-                organizer_id: 1,
-                location: "ジーズアカデミー",
-                address: "日本、〒810-0041 福岡県福岡市中央区大名１丁目３−４１ プリオ大名ビル 1F",
-                place_id: "ChIJ3_spCaqRQTURxjZSe7I15dU",
-                description: "",
-                event_image_path: "/image/000002.jpeg",
-                start_date_time: "2023/02/01 09:00",
-                end_date_time: "2023/02/01 18:00",
-                status: "下書き",
-                created_at: "2023/02/01 08:00",
-                updated_at: "2023/02/01 08:00"
-            },
-            {
-                id: 3,
-                title: "Eaaa",
-                organizer_id: 1,
-                location: "ジーズアカデミー東京",
-                address: "日本、〒150-0001 東京都渋谷区神宮前６丁目３５−３ 011 JUNCTION harajuku（JUNCTION space）",
-                place_id: "ChIJgejiqZ-MGGARA86nW9tqOTU",
-                description: "",
-                event_image_path: "/image/000001.jpeg",
-                start_date_time: "2023/01/01 09:00",
-                end_date_time: "2023/01/01 18:00",
-                status: "公開中",
-                created_at: "2023/01/01 08:00",
-                updated_at: "2023/01/01 08:00"
-            },
-            {
-                id: 4,
-                title: "Event Title 2",
-                organizer_id: 1,
-                location: "ジーズアカデミー",
-                address: "日本、〒810-0041 福岡県福岡市中央区大名１丁目３−４１ プリオ大名ビル 1F",
-                place_id: "ChIJ3_spCaqRQTURxjZSe7I15dU",
-                description: "",
-                event_image_path: "/image/000002.jpeg",
-                start_date_time: "2023/02/01 09:00",
-                end_date_time: "2023/02/01 18:00",
-                status: "下書き",
-                created_at: "2023/02/01 08:00",
-                updated_at: "2023/02/01 08:00"
-            },
-        ];
-        setOtherEvents(mockOtherEvents);
+        fetchOtherEvents();
     }, []);
 
     useEffect(() => {
@@ -172,19 +97,19 @@ function EventManagementPreview() {
         <div className={styles.container}>
             <header className={styles.header}>
                 <MdArrowBack onClick={() => router.push(`/event/management/${id}/`)} />
-                <h2>プレビュー</h2>
+                <h2>{t('preview')}</h2>
             </header>
             <main className={styles.main}>
-                <img src={eventData?.event_image_path} alt="Event Image" className={styles.eventImage} />
-                <div onClick={() => alert('開発中です')} className={styles.commentCount}>
-                    <MdOutlineInsertComment /> 0件
+                <img src={eventData?.event_image_path} alt={t('eventImageAlt')} className={styles.eventImage} />
+                <div onClick={() => alert(t('inDevelopment'))} className={styles.commentCount}>
+                    <MdOutlineInsertComment /> {t('zeroComments')}
                 </div>
 
                 <h1 className={styles.title}>{eventData?.title}</h1>
 
                 <div className={styles.organizerInfo}>
-                    <img src="/image/user.jpeg" alt="Organizer Icon" />
-                    <span className='bold'>ユーザー01</span>
+                    <img src="/image/user.jpeg" alt={t('organizerIconAlt')} />
+                    <span className='bold'>{t('user01')}</span>
                 </div>
 
                 <div className={styles.infoCardContainer}>
@@ -197,25 +122,25 @@ function EventManagementPreview() {
                     </div>
                 </div>
 
-                <div onClick={() => alert('開発中です')} className={styles.chatCard}>
-                    イベントチャット - 参加予定者は利用可能です
+                <div onClick={() => alert(t('inDevelopment'))} className={styles.chatCard}>
+                    {t('eventChat')}
                 </div>
                 <div className={styles.articlePreviewContainer}>
-                    <h2>イベント関連記事</h2>
-                    <div className={styles.articlePreview} onClick={() => alert('開発中です')}>
-                        <img src="/image/article.jpeg" alt="Article Thumbnail" />
-                        <span>旅行をワクワクさせる魔法の記事が入る予定です。例えば夢の国のツアーについてとかね</span>
+                    <h2>{t('relatedArticles')}</h2>
+                    <div className={styles.articlePreview} onClick={() => alert(t('inDevelopment'))}>
+                        <img src="/image/article.jpeg" alt={t('articleThumbnailAlt')} />
+                        <span>{t('sampleArticleText')}</span>
                     </div>
                 </div>
 
                 <div className={styles.descriptionContainer}>
-                    <h2>イベントの説明</h2>
+                    <h2>{t('eventDescription')}</h2>
                     <p className={styles.description}>
                         {showFullDescription ? eventData?.description : getPartialDescription(eventData?.description || '')}
                     </p>
                     {eventData?.description && (
                         <button onClick={toggleDescription} className={styles.showFullDescription}>
-                            {showFullDescription ? '閉じる' : 'もっと見る'}
+                            {showFullDescription ? t('close') : t('viewMore')}
                         </button>
                     )}
                 </div>
@@ -230,11 +155,10 @@ function EventManagementPreview() {
                     ></iframe>
                 </div>
 
-                {/* 他のイベントのカード */}
                 <section className={styles.otherEvents}>
                     {otherEvents.map((event) => (
                         <div key={event.id} className={styles.eventCard}>
-                            <img src={event.event_image_path} alt="Event Image" />
+                            <img src={event.event_image_path} alt={t('eventImageAlt')} />
                             <h3>{event.title}</h3>
                             <p>{event.location}</p>
                             <p>{event.start_date_time} - {event.end_date_time}</p>
@@ -243,8 +167,8 @@ function EventManagementPreview() {
                 </section>
             </main>
             <footer className={styles.footer}>
-                <p>参加費: $0</p>
-                <button className='bold' onClick={() => alert('開発中です')}>参加する</button>
+                <p>{t('participationFee')}</p>
+                <button className='bold' onClick={() => alert(t('inDevelopment'))}>{t('participate')}</button>
             </footer>
         </div>
     );

@@ -26,7 +26,7 @@ function Register(): JSX.Element {
         try {
             // CSRFトークンを取得
             await fetchCsrfToken();
-            const response = await axios.post(`${apiUrl}/auth/user/register`, {
+            const response = await axios.post(`${apiUrl}/auth/organizer/register`, {
                 name,
                 email,
                 password,
@@ -36,11 +36,11 @@ function Register(): JSX.Element {
             });
             console.log(response);
             // 登録が成功したら、トップページにリダイレクト
-            if (response.data.message === "User registered successfully!") {
+            if (response.status === 200 && response.data.message === "Registration successful") {
                 router.push('/');
             } else {
                 // 例えば、Laravelからのエラーメッセージを表示する
-                console.error("Registration error", response.data.message);
+                console.error("Registration faild", response.data.message);
             }
         } catch (error) {
             console.error("Registration error", error);

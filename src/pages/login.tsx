@@ -19,17 +19,22 @@ function Login(): JSX.Element {
             });
             console.log("CSRF cookie set successfully");
             // ログインリクエストを送信
-            const response = await axios.post(`${apiUrl}/auth/user/login`, {
+            const response = await axios.post(`${apiUrl}/auth/organizer/login`, {
                 email,
                 password
             }, {
                 withCredentials: true
             });
             console.log(response);
-            if (response.data.message === "Login successful") {
+            if (response.status === 200 && response.data.message === "Login successful") {
+                // ログイン成功
+                localStorage.setItem('organizer_token', response.data.token);  // この行を追加
                 router.push('/');
+                alert('Login successful');
             } else {
-                console.error("Login failed");
+                // ログイン失敗
+                alert('Login failed');
+                console.error("Login failed", response.data.message);
                 router.push('/login');
             }
         } catch (error) {

@@ -1,0 +1,182 @@
+.container {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    margin: 1rem;
+    border-bottom: 1px solid #ddd;
+
+    h2 {
+        margin: 0;
+    }
+}
+
+.main {
+    margin: 0;
+
+    .eventImage {
+        width: 100%;
+        height: 16rem;
+        object-fit: cover;
+    }
+
+    .commentCount{
+        margin: 0 1rem;
+    }
+
+    .title {
+        margin: 1rem;
+    }
+
+    .organizerInfo {
+        margin: 0 1rem;
+        display: flex;
+        align-items: center;
+
+        img {
+            margin: 0;
+            width: 4rem;
+            height: 4rem;
+            object-fit: cover;
+            border-radius: 4rem;
+        }
+
+        span {
+            font-size: 1rem;
+            margin-left: 1rem;
+        }
+    }
+
+    .infoCard {
+        background-color: #ddd;
+        width: 100%;
+        padding: 1rem;
+        &:first-child{
+            border-bottom: 1px #fff dashed;
+            margin-top: 1rem;
+        }
+        &:last-child{
+            margin-bottom: 1rem;
+        }
+    }
+    .chatCard {
+        background-color: white;
+        width: 100%;
+        padding: 1rem;
+        text-align: center;
+    }
+
+    // 記事のプレビュー関連
+    .articlePreviewContainer{
+        margin: 0 1rem;
+        .articlePreview {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 2rem;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+            img {
+                flex-shrink: 0; // 画像の縮小を防ぐ
+                width: 40%;
+                border-radius: 4px;
+            }
+
+            span {
+                flex-grow: 1; // 残りのスペースを埋める
+            }
+        }
+    }
+
+    .descriptionContainer{
+        margin: 0 1rem;
+        .description{
+            margin-bottom: 0;
+        }
+        .showFullDescription{
+            margin-top: 1rem;
+            text-align: center;
+            color: #0056b3;
+        }
+    }
+
+    .embedMap {
+        width: 100%;
+        height: 20rem;
+        iframe {
+            border: 0;
+        }
+    }
+
+    .otherEvents {
+        display: flex;
+        overflow-x: scroll;
+        gap: 1rem; // カード間のスペース
+        margin: 1rem;
+        /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
+        -ms-overflow-style: none;
+        /*Firefoxへの対応*/
+        scrollbar-width: none;
+        /*Google Chrome、Safariへの対応*/
+        &::-webkit-scrollbar{
+            display: none;
+        }
+        // カードスタイリング
+        .eventCard {
+            flex: 0 0 auto;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1rem;
+            margin-top: 2rem;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+            h3 {
+                font-size: 1.2rem;
+                margin-top: 0.5rem;
+            }
+
+            p {
+                font-size: 0.9rem;
+                margin-top: 0.5rem;
+                color: #777;
+            }
+            img {
+                max-width: 100%;
+                height: auto;
+            }
+        }
+    }
+
+}
+
+.footer {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+
+    button {
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+
+        &:hover {
+            background-color: #0056b3;
+        }
+    }
+}

@@ -11,7 +11,7 @@ function EventManagementLocation() {
     const { id } = router.query;
     const [location, setLocation] = useState<string>('');
     const [address, setAddress] = useState<string>('');
-    const [placeId, setPlaceId] = useState<string>('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     const mapRef = useRef(null);
     const [map, setMap] = useState<any>(null);
@@ -20,11 +20,12 @@ function EventManagementLocation() {
     useEffect(() => {
         const fetchEventLocation = async () => {
             try {
-                const response = await axios.get(`/api/get-event-location/${id}`);
+                const response = await axios.get(`${apiUrl}/api/get-event-location/${id}`, {
+                    withCredentials: true
+                });
                 if (response.data) {
-                    setLocation(response.data.location || ''); // Assuming the field in the response is named 'name'
-                    setAddress(response.data.address || ''); // Assuming the field in the response is named 'address'
-                    setPlaceId(response.data.place_id || ''); // Assuming the field in the response is named 'placeId'
+                    setLocation(response.data.location || '');
+                    setAddress(response.data.address || '');
                 }
             } catch (error) {
                 console.error("Error fetching event location", error);
@@ -34,7 +35,6 @@ function EventManagementLocation() {
         fetchEventLocation();
     }, [id]);
 
-
     useEffect(() => {
         if (mapRef.current && !map) {
             const newMap = new google.maps.Map(mapRef.current, {
@@ -43,7 +43,7 @@ function EventManagementLocation() {
             });
             setMap(newMap);
         }
-    }, []);  // 依存配列を空に
+    }, []);
 
     useEffect(() => {
         if (map && !autocomplete) {
@@ -57,13 +57,13 @@ function EventManagementLocation() {
 
     const searchLocation = async (query: string) => {
         try {
-            const response = await axios.post(`/api/search-location`, { query });
+            const response = await axios.post(`${apiUrl}/api/google-maps/search-location`, { query }, {
+                withCredentials: true
+            });
             if (response.data) {
                 const place = response.data;
-
                 setLocation(place.name || '');
                 setAddress(place.formatted_address || '');
-                setPlaceId(place.place_id || '');
 
                 if (place.geometry && place.geometry.location) {
                     new google.maps.Marker({
@@ -86,12 +86,13 @@ function EventManagementLocation() {
         }
     };
 
-    const saveLocation = async (place: { name: string, formatted_address: string, place_id: string }) => {
+    const saveLocation = async (place: { name: string, formatted_address: string }) => {
         try {
-            await axios.patch(`/api/update-event-location/${id}`, {
+            await axios.patch(`${apiUrl}/api/update-event-location/${id}`, {
                 location: place.name,
-                address: place.formatted_address,
-                place_id: place.place_id
+                address: place.formatted_address
+            }, {
+                withCredentials: true
             });
         } catch (error) {
             console.error("Error saving location", error);
@@ -101,7 +102,7 @@ function EventManagementLocation() {
     return (
         <div>
             <header className={styles.header}>
-                <MdArrowBack onClick={() => router.push('/event/management/${id}/')} />
+                <MdArrowBack onClick={() => router.push(`/event/management/${id}/`)} />
                 <h2>イベントの場所</h2>
             </header>
             <main className={styles.main}>
@@ -121,13 +122,10 @@ function EventManagementLocation() {
                 <div>
                     <strong>住所:</strong> {address}
                 </div>
-                <div>
-                    <strong>ID:</strong> {placeId}
-                </div>
                 <div ref={mapRef} style={{ width: '100%', height: '400px' }}></div>
             </main>
             <footer className={styles.footer}>
-                <button className='bold' onClick={() => router.push('/event/management/${id}/')}>戻る（自動保存）</button>
+                <button className='bold' onClick={() => router.push(`/event/management/${id}/`)}>戻る（自動保存）</button>
             </footer>
         </div>
     );

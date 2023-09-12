@@ -12,7 +12,9 @@ function EventManagementDescription() {
     useEffect(() => {
         const fetchEventDescription = async () => {
             try {
-                const response = await axios.get(`/api/get-event-description/${id}`);
+                const response = await axios.get(`/api/get-event-description/${id}`, {
+                    withCredentials: true
+                });
                 setEventDescription(response.data.description);
             } catch (error) {
                 console.error("Error fetching event description", error);
@@ -24,7 +26,9 @@ function EventManagementDescription() {
 
     const saveDescription = async () => {
         try {
-            await axios.patch(`/api/update-event-description/${id}`, { description: eventDescription });
+            await axios.patch(`/api/update-event-description/${id}`, { description: eventDescription }, {
+                withCredentials: true
+            });
         } catch (error) {
             console.error("Error updating event description", error);
         }
@@ -33,7 +37,7 @@ function EventManagementDescription() {
     return (
         <div>
             <header className={styles.header}>
-                <MdArrowBack onClick={() => router.push('/event/management/${id}/')} />
+                <MdArrowBack onClick={() => router.push(`/event/management/${id}/`)} />
                 <h2>イベントの説明</h2>
             </header>
             <main className={styles.main}>
@@ -49,7 +53,7 @@ function EventManagementDescription() {
                 </div>
             </main>
             <footer className={styles.footer}>
-                <button className='bold' onClick={() => router.push('/event/management/${id}/')}>戻る（自動保存）</button>
+                <button className='bold' onClick={() => router.push(`/event/management/${id}/`)}>戻る（自動保存）</button>
             </footer>
         </div>
     );

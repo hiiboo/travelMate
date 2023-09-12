@@ -6,10 +6,11 @@ i18n.use(initReactI18next).init({
     resources: {
         en: {
             translation: {
+                // event/management/[id].tsx
                 editEvent: "Edit Event",
                 delete: "Delete",
                 preview: "Preview",
-                draft: "Return to Draft",
+                returnDraft: "Return to Draft",
                 publish: "Publish Event",
                 endEvent: "End Event",
                 back: "Back (Auto-save)",
@@ -26,15 +27,34 @@ i18n.use(initReactI18next).init({
                 maxParticipants: "Maximum Number of Participants",
                 guestLimitation: "Guest Allowance/Maximum Number",
                 questionFeature: "Question Feature",
-                // ... more translations
+                // event/management.tsx
+                createNewEvent: "Create a new event",
+                published: "Published",
+                draft: "Draft",
+                ended: "Ended",
+                // event/management/[id]/preview.tsx
+                previewLabel: "Preview",
+                eventImage: "Event Image",
+                comments: "Comments",
+                organizer: "Organizer",
+                relatedArticles: "Related Articles",
+                eventDescriptionTitle: "Event Description",
+                readMore: "Read More",
+                close: "Close",
+                otherEventsTitle: "Other Events",
+                eventLocation: "Event Location",
+                eventDate: "Event Date",
+                participationFeeLabel: "Participation Fee",
+                participate: "Participate"
             }
         },
         ja: {
             translation: {
+                // event/management/[id].tsx
                 editEvent: "イベントを編集",
                 delete: "削除",
                 preview: "プレビュー",
-                draft: "下書きに戻す",
+                returnDraft: "下書きに戻す",
                 publish: "イベントを公開する",
                 endEvent: "イベントを終了にする",
                 back: "戻る（自動保存）",
@@ -51,7 +71,25 @@ i18n.use(initReactI18next).init({
                 maxParticipants: "参加人数の上限",
                 guestLimitation: "ゲスト可否/人数上限",
                 questionFeature: "質問機能",
-                // ... more translations
+                // event/management.tsx
+                createNewEvent: "イベントを新規作成する",
+                published: "公開中",
+                draft: "下書き",
+                ended: "終了",
+                // event/management/[id]/preview.tsx
+                previewLabel: "プレビュー",
+                eventImage: "イベント画像",
+                comments: "コメント",
+                organizer: "主催者",
+                relatedArticles: "関連記事",
+                eventDescriptionTitle: "イベントの説明",
+                readMore: "もっと見る",
+                close: "閉じる",
+                otherEventsTitle: "他のイベント",
+                eventLocation: "イベントの場所",
+                eventDate: "イベントの日時",
+                participationFeeLabel: "参加費",
+                participate: "参加する"
             }
         }
     },

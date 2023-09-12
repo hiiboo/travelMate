@@ -9,13 +9,16 @@ function EventManagementDateTime() {
     const { id } = router.query;
     const [startDate, setStartDate] = useState<string>('');
     const [endDate, setEndDate] = useState<string>('');
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
         const fetchEventDates = async () => {
             try {
-                const response = await axios.get(`/api/get-event-dates/${id}`);
-                setStartDate(response.data.start_date_time);
-                setEndDate(response.data.end_date_time);
+                const response = await axios.get(`${apiUrl}/api/events/${id}/date`, {
+                    withCredentials: true
+                });
+                setStartDate(response.data.start_date);
+                setEndDate(response.data.end_date);
             } catch (error) {
                 console.error("Error fetching event dates", error);
             }
@@ -26,7 +29,9 @@ function EventManagementDateTime() {
 
     const saveDates = async () => {
         try {
-            await axios.patch(`/api/update-event-dates/${id}`, { start_date_time: startDate, end_date_time: endDate });
+            await axios.patch(`${apiUrl}/api/events/${id}/date`, { start_date: startDate, end_date: endDate }, {
+                withCredentials: true
+            });
         } catch (error) {
             console.error("Error updating event dates", error);
         }
@@ -35,7 +40,7 @@ function EventManagementDateTime() {
     return (
         <div>
             <header className={styles.header}>
-                <MdArrowBack onClick={() => router.push('/event/management/${id}/')} />
+                <MdArrowBack onClick={() => router.push(`/event/management/${id}/`)} />
                 <h2>イベントの日時</h2>
             </header>
             <main className={styles.main}>
@@ -65,7 +70,7 @@ function EventManagementDateTime() {
                 </div>
             </main>
             <footer className={styles.footer}>
-                <button className='bold' onClick={() => router.push('/event/management/${id}/')}>戻る（自動保存）</button>
+                <button className='bold' onClick={() => router.push(`/event/management/${id}/`)}>戻る（自動保存）</button>
             </footer>
         </div>
     );

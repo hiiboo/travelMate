@@ -3,23 +3,20 @@ import axios from 'axios';
 import { useRouter } from 'next/router';
 import styles from '../../../../styles/eventManagementById.module.scss';
 import { MdArrowBack } from 'react-icons/md';
-import Papa from 'papaparse';
+import { utils } from '../../../../utils/utils';
 
 function EventManagementTitle() {
-    const router = useRouter();
-    const { id } = router.query;
+    const { t, router, id, apiUrl, createSecuredAxiosInstance, formatDateToCustom } = utils();
     const [eventTitle, setEventTitle] = useState<string>('');
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
     useEffect(() => {
         const fetchEventTitle = async () => {
             if (!id) return;  // 追加: id が存在しない場合はリクエストをスキップ
 
             try {
-                const response = await axios.get(`${apiUrl}/api/event-title/${id}`, {
-                    withCredentials: true
-                });
-                setEventTitle(response.data.title);
+                const securedAxios = createSecuredAxiosInstance();
+                const response = await securedAxios.get(`/api/event-title/${id}`);
+                setEventTitle(response.data.data.title);
             } catch (error) {
                 console.error("Error fetching event title", error);
             }

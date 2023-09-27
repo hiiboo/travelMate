@@ -1,13 +1,12 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import axios from 'axios';
 import Link from 'next/link';
 import styles from '../../styles/eventList.module.scss'; // モジュールの名前を変更する場合は、ファイル名も変更してください
 import { MdOutlineDateRange, MdOutlineLocationOn } from 'react-icons/md';
-import { formatDateToCustom } from '../../../utils/formatDateToCustom';
+import { utils } from '../../../utils/utils';
 
 function EventList(): JSX.Element {
+    const { t, router, id, apiUrl, createSecuredAxiosInstance, formatDateToCustom } = utils();
     type Genre = {
         id: number;
         name: string;
@@ -27,33 +26,22 @@ function EventList(): JSX.Element {
     };
 
     const [events, setEvents] = useState<Event[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const router = useRouter();
 
     useEffect(() => {
 
         const fetchEvents = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/api/events`, {  // APIのエンドポイントの変更
-                    withCredentials: true
-                });
+                const securedAxios = createSecuredAxiosInstance();
+                const response = await securedAxios.get(`api/events`);
                 const publishedEvents = response.data.filter((event: Event) => event.status === '公開');
                 setEvents(publishedEvents);
             } catch (error) {
                 console.error("Error fetching events", error);
-            } finally {
-                setLoading(false);
             }
         };
 
         fetchEvents();
     }, []);
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     return (
         <div>

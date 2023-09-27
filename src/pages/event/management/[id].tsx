@@ -1,10 +1,8 @@
 import styles from '../../../styles/eventManagementById.module.scss';
 import { MdAddCircle } from 'react-icons/md';
-import { useRouter } from 'next/router';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import i18n from '../../../langages/i18nConfig'; // i18nConfig.tsのパスを正しく指定してください。
+import { utils } from '../../../utils/utils';
 
 const ACTION_KEYS = [
     'thumbnail', 'title', 'changeOrganizer', 'dateTime', 'location',
@@ -14,40 +12,34 @@ const ACTION_KEYS = [
 ];
 
 function EventManagementById() {
-    const { t } = useTranslation();  // 翻訳関数の取得
-    const router = useRouter();
-    const { id } = router.query;
+    const { t, router, id, apiUrl, createSecuredAxiosInstance, formatDateToCustom } = utils();
     const [eventStatus, setEventStatus] = useState<string | null>(null);
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const [language, setLanguage] = useState<string>('ja');
-
 
     useEffect(() => {
         const fetchEventStatus = async () => {
+            if (!id) return; // ここでidがundefinedなら処理を止める
+
             try {
-                const response = await axios.get(`${apiUrl}/api/event-status/${id}`, {
-                    withCredentials: true
-                });
-                setEventStatus(response.data.status);
+                const securedAxios = createSecuredAxiosInstance();
+                const response = await securedAxios.get(`/api/event-status/${id}`);
+                setEventStatus(response.data.data.status);
+                console.log('Event status', response.data.data.status);
             } catch (error) {
                 console.error("Error fetching event status", error);
             }
         };
 
-        fetchEventStatus();
-
         const fetchLanguageSetting = async () => {
             try {
-                const response = await axios.get(`${apiUrl}/api/language-setting`, {
-                    withCredentials: true
-                });
-                setLanguage(response.data.language);
+                const securedAxios = createSecuredAxiosInstance();
+                const response = await securedAxios.get(`/api/language-setting`);
                 i18n.changeLanguage(response.data.language);
             } catch (error) {
                 console.error("Error fetching language setting", error);
             }
         };
 
+        fetchEventStatus();
         fetchLanguageSetting();
 
     }, [id]);
@@ -56,9 +48,8 @@ function EventManagementById() {
         switch (actionKey) {
             case 'delete':
                 try {
-                    await axios.delete(`${apiUrl}/api/events/${id}`, {
-                        withCredentials: true
-                    });
+                    const securedAxios = createSecuredAxiosInstance();
+                    await securedAxios.delete(`/api/events/${id}`);
                     router.push('/event/management/');
                     alert(t('articleDeleted')); // 翻訳関数を使用
                 } catch (error) {
@@ -111,11 +102,10 @@ function EventManagementById() {
     };
 
     const handlePublishEvent = async () => {
-        if (eventStatus === 'publish' || eventStatus === 'end') {
+        if (eventStatus === 'published' || eventStatus === 'end') {
             try {
-                await axios.patch(`${apiUrl}/api/events/${id}`, { status: 'draft' }, {
-                    withCredentials: true
-                });
+                const securedAxios = createSecuredAxiosInstance();
+                await securedAxios.patch(`/api/events/${id}`, { status: 'draft' });
                 setEventStatus('draft');
                 alert('Updating event status.');
             } catch (error) {
@@ -123,10 +113,9 @@ function EventManagementById() {
             }
         } else {
             try {
-                await axios.patch(`${apiUrl}/api/events/${id}`, { status: 'publish' }, {
-                    withCredentials: true
-                });
-                setEventStatus('publish');
+                const securedAxios = createSecuredAxiosInstance();
+                await securedAxios.patch(`${apiUrl}/api/events/${id}`, { status: 'published' });
+                setEventStatus('published');
                 router.push(`/event/management/${id}/congratulations`)
             } catch (error) {
                 console.error("Error updating event status", error);
@@ -136,9 +125,8 @@ function EventManagementById() {
 
     const handleEndEvent = async () => {
         try {
-            await axios.patch(`${apiUrl}/api/events/${id}`, { status: 'end' }, {
-                withCredentials: true
-            });
+            const securedAxios = createSecuredAxiosInstance();
+            await securedAxios.patch(`/api/events/${id}`, { status: 'end' });
             router.push('/event/management/');
         } catch (error) {
             console.error("Error updating event status", error);
@@ -163,7 +151,7 @@ function EventManagementById() {
             </main>
             <footer className={styles.footer}>
                 <button className='bold' onClick={handlePublishEvent}>
-                    {eventStatus === 'publish' || eventStatus === 'end' ? t('returnDraft') : t('publish')}
+                    {eventStatus === 'published' || eventStatus === 'end' ? t('returnDraft') : t('publish')}
                 </button>
                 <button className='bold' onClick={handleEndEvent}>{t('endEvent')}</button>
                 <button className='bold' onClick={() => handleFooterAction('back')}>{t('back')}</button>

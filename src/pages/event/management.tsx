@@ -1,15 +1,14 @@
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
-import axios from 'axios';
 import Link from 'next/link';
 import styles from '../../styles/eventManagement.module.scss';
 import { MdOutlineDateRange, MdOutlineLocationOn, MdAddCircleOutline } from 'react-icons/md';
-import { formatDateToCustom } from '../../utils/formatDateToCustom';
-import { useTranslation } from 'react-i18next';
 import i18n from '../../langages/i18nConfig';
+import { utils } from '../../utils/utils';
 
 function EventManagement(): JSX.Element {
+    const { t, router, id, apiUrl, createSecuredAxiosInstance, formatDateToCustom } = utils();
+
     type Genre = {
         id: number;
         name: string;
@@ -32,20 +31,6 @@ function EventManagement(): JSX.Element {
     };
 
     const [events, setEvents] = useState<Event[]>([]);
-    const [loading, setLoading] = useState(true);
-    const { t } = useTranslation();  // <-- 追加
-
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-    const router = useRouter();
-
-    const createSecuredAxiosInstance = () => axios.create({
-        baseURL: process.env.NEXT_PUBLIC_API_URL,
-        withCredentials: true,
-        headers: {
-            'Authorization': `Bearer ${localStorage.getItem('organizer_token')}`
-        }
-    });
-
 
     useEffect(() => {
 
@@ -65,8 +50,6 @@ function EventManagement(): JSX.Element {
 
             } catch (error) {
                 console.error("Error fetching events", error);
-            } finally {
-                setLoading(false);
             }
         };
 
@@ -99,10 +82,6 @@ function EventManagement(): JSX.Element {
             console.error("Error creating new event", error);
         }
     };
-
-    if (loading) {
-        return <div>Loading...</div>;
-    }
 
     function getStatusClass(status: string): string {
         switch (status) {

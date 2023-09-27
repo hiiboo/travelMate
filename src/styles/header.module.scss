@@ -1,11 +1,13 @@
 .header {
     background-color: white;
-    height: 4rem;
+    height: 4.3rem;
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 1rem;
+    padding-top: 0.8rem;
+    padding-bottom: 1.5rem;
 
     .hamburger, .icon {
         background: none;
@@ -58,6 +60,28 @@
     }
 
     .logo {
-        height: 2rem; // または適切な大きさ
+        padding-left: 0.04rem;
+    }
+    .logoContainer {
+        margin: 0;
+        padding: 0;
+        text-align: start;
+    }
+    .logoText {
+        font-size: 0.8rem;
+        font-weight: bold;
+        color: #08131A;
+        line-height: 0.2rem;
+        margin: 0;
+    }
+    .logoBox{
+        position: relative;
+        width: 8.5rem;
+    }
+    .menubox {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 5rem;
     }
 }

@@ -1,21 +1,19 @@
 import { useState, useEffect } from 'react';
 import styles from '../../../../styles/eventContents.module.scss';
-import axios from 'axios';
 import { MdOutlineInsertComment, MdOutlineDateRange, MdOutlineLocationOn } from 'react-icons/md';
-import { formatDateToCustom } from '../../../utils/formatDateToCustom';
-import { useRouter } from 'next/router';
+import { utils } from '../../../utils/utils';
 
 function EventDetails() {
+    const { t, router, id, apiUrl, createSecuredAxiosInstance, formatDateToCustom } = utils();
     const [eventData, setEventData] = useState<any>(null);
     const [embedMapUrl, setEmbedMapUrl] = useState<string | null>(null);
     const [showFullDescription, setShowFullDescription] = useState<boolean>(false);
 
-    const { id } = useRouter().query;
-
     useEffect(() => {
         const fetchEventData = async () => {
             try {
-                const response = await axios.get(`/api/events/${id}`);
+                const securedAxios = createSecuredAxiosInstance();
+                const response = await securedAxios.get(`/api/events/${id}`);
                 setEventData(response.data);
             } catch (error) {
                 console.error("Error fetching event data", error);
@@ -28,7 +26,8 @@ function EventDetails() {
     useEffect(() => {
         const fetchEmbedMapUrl = async () => {
             try {
-                const response = await axios.get(`/api/get-embed-map-url/${id}`);
+                const securedAxios = createSecuredAxiosInstance();
+                const response = await securedAxios.get(`/api/get-embed-map-url/${id}`);
                 setEmbedMapUrl(response.data.embedUrl);
             } catch (error) {
                 console.error("Error fetching embed map url", error);
